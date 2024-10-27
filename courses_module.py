@@ -1,50 +1,84 @@
-import courses_module as cm
-import personal as p
+import mysql.connector
+from mysql.connector import Error
+import pandas as pd
 
-# This program will allow you to add a single course and all of its information into the course information table.
-#   Be sure to write each input as specificied in the question prompts.
- 
-connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
+# This is the module used in all of the programs for this project. The global constants "DATABSE", "COURSE_TABLE", 
+#   and "PREREQ_TABLE" can be changed, but is not recommended. Before begining to run any programs, make sure
+#   to edit the file "personal.py" where you must enter the values for "HOST_NAME", "USERNAME", and "PASSWORD"
 
-course_code = input("What is the course code (ABCD 000)?: ")
-course_name = input("What is the name of the course?: ")
-credits = input("How many credits is the course worth?: ")
-course_type = input("What type of course is it (Math, Non-Math, PD)?: ")
-completion = input("Is the course Available/Current/Planned/Prereq/Completed?: ")
-term = input("What term is/will the course be completed? ")
-grade = input("What grade has been acheived for the course?: ")
+DATABASE = "courses"
+COURSE_TABLE = "course_info"
+PREREQ_TABLE = "prerequisite_courses"
+COURSE_INFO_COLUMNS = ["CourseCode", "CourseName", "Credits", "CourseType", "Completion", "Term", "Grade"]
+PREREQ_INFO_COLUMNS = ["CourseCode", "PrereqCode", "MinGrade"]
 
-add_query1 = """
-INSERT INTO
+course_info_table_query = """
+SELECT *
+FROM 
     {}
-VALUES
-    ("{}", "{}", {}, "{}", "{}", "{}", {});
-""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, term, grade)
+ORDER BY
+    Term ASC,
+    Credits ASC,
+    CourseType ASC;
+""".format(COURSE_TABLE)
 
-add_query2 = """
-INSERT INTO
+prereq_info_table_query = """
+SELECT *
+FROM 
     {}
-VALUES
-    ("{}", "{}", {}, "{}", "{}", NULL, NULL);
-""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, grade)
+""".format(PREREQ_TABLE)
 
-add_query3 = """
-INSERT INTO
-    {}
-VALUES
-    ("{}", "{}", {}, "{}", "{}", "{}", NULL);
-""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, term)
+def server_connection(host_name, username, password):
+    connection = None
+    try: 
+        connection = mysql.connector.connect(
+            host = host_name,
+            user = username,
+            passwd = password
+        )
+        print("MySQL Database Connection Successful")
+    except Error as err:
+        print(f"Error: '{err}'")
+    return connection
 
-def add_course():
-    if completion == "Available" or completion == "Prereq":
-        cm.execute_query(connection, add_query2)
-        print("{} Course Added".format(completion))
-    elif completion == "Planned":
-        cm.execute_query(connection, add_query3)
-        print("{} Course Added".format(completion))
-    else:
-        cm.execute_query(connection, add_query1)
-        print("{} Course Added".format(completion))
-    return
+def database_connection(host_name, username, password, database_name):
+    connection = None
+    try:
+        connection = mysql.connector.connect(
+            host = host_name,
+            user = username,
+            passwd = password,
+            database = database_name,
+            autocommit = True
+        )
+        print("MySQL Database Connection Successful")
+    except Error as err:
+        print(f"Error: '{err}'")
 
-add_course()
+    return connection
+
+def execute_query(connection, query):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query)
+        connection.commit
+        print("Query Successful")
+    except Error as err:
+        print(f"Error: '{err}'")
+
+def read_query(connection, query):
+    cursor = connection.cursor()
+    result = None
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    except Error as err:
+        print(f"Error: '{err}'")
+
+def create_dataframe(connection, info_query, column_names, table):
+    results = read_query(connection, info_query)
+    for data in results:
+        data = list(data)
+        table.append(data)
+    return pd.DataFrame(table, columns = column_names)
