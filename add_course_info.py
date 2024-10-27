@@ -1,13 +1,16 @@
 import courses_module as cm
 import personal as p
 
+# This program will allow you to add a single course and all of its information into the course information table.
+#   Be sure to write each input as specificied in the question prompts.
+ 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 
 course_code = input("What is the course code (ABCD 000)?: ")
 course_name = input("What is the name of the course?: ")
 credits = input("How many credits is the course worth?: ")
 course_type = input("What type of course is it (Math, Non-Math, PD)?: ")
-completion = input("Is the course available/current/planned/prereq/completed?: ")
+completion = input("Is the course Available/Current/Planned/Prereq/Completed?: ")
 term = input("What term is/will the course be completed? ")
 grade = input("What grade has been acheived for the course?: ")
 
