@@ -3,24 +3,21 @@ import personal as p
 import pandas as pd
 from IPython.display import display
 
-connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
+# This program will allow you to view a specifc table with every single column and row
 
-course_info_table_query = """
-SELECT *
-FROM 
-    {}
-ORDER BY
-    Term ASC,
-    Credits ASC,
-    CourseType ASC;
-""".format(cm.COURSE_TABLE)
+connection = cm.database_connection(p.HOST_NAME,p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-results = cm.read_query(connection, course_info_table_query)
+table_name = int(input("Which table would you like to view (1 for \"{}\" | 2 for \"{}\")?: ".format(cm.COURSE_TABLE, cm.PREREQ_TABLE)))
 
 table = []
 
-for data in results:
-    data = list(data)
-    table.append(data)
+def read_table():
+    if table_name == 1:
+        display(cm.create_dataframe(connection, cm.course_info_table_query, cm.COURSE_INFO_COLUMNS, table))
+    elif table_name == 2:
+        display(cm.create_dataframe(connection, cm.prereq_info_table_query, cm.PREREQ_INFO_COLUMNS, table))
+    else:
+        return
+    return
 
-display(pd.DataFrame(table, columns = cm.COURSE_INFO_COLUMNS))
+read_table()
