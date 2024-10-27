@@ -1,38 +1,50 @@
 import courses_module as cm
 import personal as p
 
-server_connection = cm.server_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD)
+# This program will allow you to add a single course and all of its information into the course information table.
+#   Be sure to write each input as specificied in the question prompts.
+ 
+connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-database_query = """
-CREATE DATABASE {};
-""".format(cm.DATABASE)
+course_code = input("What is the course code (ABCD 000)?: ")
+course_name = input("What is the name of the course?: ")
+credits = input("How many credits is the course worth?: ")
+course_type = input("What type of course is it (Math, Non-Math, PD)?: ")
+completion = input("Is the course Available/Current/Planned/Prereq/Completed?: ")
+term = input("What term is/will the course be completed? ")
+grade = input("What grade has been acheived for the course?: ")
 
-course_table_query = """
-CREATE TABLE {} (
-    CourseCode VARCHAR(30) NOT NULL,
-    CourseName VARCHAR(10000),
-    Credits DECIMAL(10,2),
-    CourseType VARCHAR(20),
-    Completion VARCHAR(20),
-    Term VARCHAR(5),
-    Grade INT,
-    PRIMARY KEY (CourseCode)
-);
-""".format(cm.COURSE_TABLE)
+add_query1 = """
+INSERT INTO
+    {}
+VALUES
+    ("{}", "{}", {}, "{}", "{}", "{}", {});
+""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, term, grade)
 
-prereq_table_query = """
-CREATE TABLE {} (
-    CourseCode VARCHAR(30) NOT NULL,
-    PrereqCode VARCHAR(30),
-    EqPrereq VARCHAR(15),
-    MinGrade INT,
-    PRIMARY KEY (CourseCode)
-);
-""".format(cm.PREREQ_TABLE)
+add_query2 = """
+INSERT INTO
+    {}
+VALUES
+    ("{}", "{}", {}, "{}", "{}", NULL, NULL);
+""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, grade)
 
-cm.execute_query(server_connection, database_query)
+add_query3 = """
+INSERT INTO
+    {}
+VALUES
+    ("{}", "{}", {}, "{}", "{}", "{}", NULL);
+""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, term)
 
-database_connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
+def add_course():
+    if completion == "Available" or completion == "Prereq":
+        cm.execute_query(connection, add_query2)
+        print("{} Course Added".format(completion))
+    elif completion == "Planned":
+        cm.execute_query(connection, add_query3)
+        print("{} Course Added".format(completion))
+    else:
+        cm.execute_query(connection, add_query1)
+        print("{} Course Added".format(completion))
+    return
 
-cm.execute_query(database_connection, course_table_query)
-cm.execute_query(database_connection, prereq_table_query)
+add_course()
