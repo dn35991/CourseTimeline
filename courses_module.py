@@ -1,59 +1,50 @@
-import mysql.connector
-from mysql.connector import Error
-import pandas as pd
+import courses_module as cm
+import personal as p
 
-# Define HOST_NAME, USERNAME, and PASSWORD in personal.py
+# This program will allow you to add a single course and all of its information into the course information table.
+#   Be sure to write each input as specificied in the question prompts.
+ 
+connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-DATABASE = "courses"
-COURSE_TABLE = "course_info"
-PREREQ_TABLE = "prereq_courses"
-COURSE_INFO_COLUMNS = ["CourseCode", "CourseName", "Credits", "CourseType", "Completion", "Term", "Grade"]
-PREREQ_INFO_COLUMNS = ["CourseCode", "PrereqCode", "EqPrereq", "MinGrade"]
+course_code = input("What is the course code (ABCD 000)?: ")
+course_name = input("What is the name of the course?: ")
+credits = input("How many credits is the course worth?: ")
+course_type = input("What type of course is it (Math, Non-Math, PD)?: ")
+completion = input("Is the course Available/Current/Planned/Prereq/Completed?: ")
+term = input("What term is/will the course be completed? ")
+grade = input("What grade has been acheived for the course?: ")
 
-def server_connection(host_name, username, password):
-    connection = None
-    try: 
-        connection = mysql.connector.connect(
-            host = host_name,
-            user = username,
-            passwd = password
-        )
-        print("MySQL Database Connection Successful")
-    except Error as err:
-        print(f"Error: '{err}'")
-    return connection
+add_query1 = """
+INSERT INTO
+    {}
+VALUES
+    ("{}", "{}", {}, "{}", "{}", "{}", {});
+""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, term, grade)
 
-def database_connection(host_name, username, password, database_name):
-    connection = None
-    try:
-        connection = mysql.connector.connect(
-            host = host_name,
-            user = username,
-            passwd = password,
-            database = database_name,
-            autocommit = True
-        )
-        print("MySQL Database Connection Successful")
-    except Error as err:
-        print(f"Error: '{err}'")
+add_query2 = """
+INSERT INTO
+    {}
+VALUES
+    ("{}", "{}", {}, "{}", "{}", NULL, NULL);
+""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, grade)
 
-    return connection
+add_query3 = """
+INSERT INTO
+    {}
+VALUES
+    ("{}", "{}", {}, "{}", "{}", "{}", NULL);
+""".format(cm.COURSE_TABLE, course_code, course_name, credits, course_type, completion, term)
 
-def execute_query(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        connection.commit
-        print("Query Successful")
-    except Error as err:
-        print(f"Error: '{err}'")
+def add_course():
+    if completion == "Available" or completion == "Prereq":
+        cm.execute_query(connection, add_query2)
+        print("{} Course Added".format(completion))
+    elif completion == "Planned":
+        cm.execute_query(connection, add_query3)
+        print("{} Course Added".format(completion))
+    else:
+        cm.execute_query(connection, add_query1)
+        print("{} Course Added".format(completion))
+    return
 
-def read_query(connection, query):
-    cursor = connection.cursor()
-    result = None
-    try:
-        cursor.execute(query)
-        result = cursor.fetchall()
-        return result
-    except Error as err:
-        print(f"Error: '{err}'")
+add_course()
