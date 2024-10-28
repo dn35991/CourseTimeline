@@ -7,7 +7,7 @@ from IPython.display import display
 
 connection = cm.database_connection(p.HOST_NAME,p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-table_name = int(input("Which table would you like to view (1 for \"{}\" | 2 for \"{}\")?: ".format(cm.COURSE_TABLE, cm.PREREQ_TABLE)))
+table_name = int(input("Which table would you like to view (1. {} | 2. {})?: ".format(cm.COURSE_TABLE, cm.PREREQ_TABLE)))
 
 table = []
 
