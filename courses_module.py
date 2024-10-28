@@ -16,8 +16,24 @@ course_info_table_query = """
 SELECT *
 FROM 
     {}
-ORDER BY
-    Term ASC,
+ORDER BY 
+    (CASE WHEN Term = NULL THEN 1
+          ELSE 2
+    END) DESC,
+    (CASE WHEN Completion = "Completed" THEN 1
+          WHEN Completion = "Current" THEN 2
+          WHEN Completion = "Planned" THEN 3
+          WHEN Completion = "Available" THEN 4
+          WHEN Completion = "Prereq" THEN 5
+          ELSE 6
+    END) ASC,
+	Term ASC,
+    Credits ASC,
+    (CASE WHEN CourseType = "Non-Math" THEN 1
+		  WHEN CourseType = "PD" THEN 2
+          WHEN CourseType = "Math" THEN 3
+          ELSE 4
+	END) ASC;),
     Credits ASC,
     CourseType ASC;
 """.format(COURSE_TABLE)
@@ -26,6 +42,8 @@ prereq_info_table_query = """
 SELECT *
 FROM 
     {}
+ORDER BY
+    CourseCode ASC;
 """.format(PREREQ_TABLE)
 
 def server_connection(host_name, username, password):
