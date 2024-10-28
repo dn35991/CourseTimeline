@@ -5,7 +5,7 @@ import personal as p
 #   your input matches exactly to the entries or columns in the database
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
-table = int(input("Which table is being updated (1 for \"{}\" | 2 for \"{}\")?: "))
+table = int(input("Which table is being updated (1 for \"{}\" | 2 for \"{}\")?: ".format(cm.COURSE_TABLE, cm.PREREQ_TABLE)))
 course_code = input("What is the course code of the entry?: ")
 prereq_code = input("What is the prerequisite code for the entry?: ")
 set1 = input("What column is being updated?: ")
