@@ -44,3 +44,4 @@ def add_prereqs():
     print("{} Prerequistes Added for {}".format(n, course_code))
 
 add_prereqs()
+
