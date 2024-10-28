@@ -17,9 +17,19 @@ def add_prereqs():
         pcode = input("What is the prerequisite course code?: ")
         minimum = input("What is the minimum grade required?: ")
 
-        if pcode == "" or minimum == "":
+        if pcode == "":
             print("{} Prerequistes Added for {}".format(n, course_code))
             return
+        elif minimum == "":
+            add_prereq_query = """
+            INSERT INTO
+                {}
+            VALUES
+                ("{}", "{}", NULL);
+            """.format(cm.PREREQ_TABLE, course_code, pcode)
+
+            cm.execute_query(connection, add_prereq_query)
+            n = n + 1 
         else:
             add_prereq_query = """
             INSERT INTO
@@ -34,5 +44,3 @@ def add_prereqs():
     print("{} Prerequistes Added for {}".format(n, course_code))
 
 add_prereqs()
-
-
