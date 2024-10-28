@@ -1,8 +1,8 @@
 # Edit this value with the host name of your MySQL connection
-HOST_NAME = ""
+HOST_NAME = "localhost"
 
 # Edit this value with the username of your MySQL connection
-USERNAME = ""
+USERNAME = "root"
 
 # Edit this value with the password of your MySQL connection
-PASSWORD = ""
+PASSWORD = "tttttt"
