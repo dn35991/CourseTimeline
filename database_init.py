@@ -6,12 +6,12 @@ import personal as p
 
 server_connection = cm.server_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD)
 
-database_query = """
-CREATE DATABASE {};
-""".format(cm.DATABASE)
+database_query = f"""
+CREATE DATABASE {cm.DATABASE};
+"""
 
-course_table_query = """
-CREATE TABLE {} (
+course_table_query = f"""
+CREATE TABLE {cm.COURSE_TABLE} (
     CourseCode VARCHAR(30) NOT NULL,
     CourseName VARCHAR(10000),
     Credits DECIMAL(10,2),
@@ -21,10 +21,10 @@ CREATE TABLE {} (
     Grade INT,
     PRIMARY KEY (CourseCode)
 );
-""".format(cm.COURSE_TABLE)
+"""
 
-prereq_table_query = """
-CREATE TABLE {} (
+prereq_table_query = f"""
+CREATE TABLE {cm.PREREQ_TABLE} (
     CourseCode VARCHAR(30) NOT NULL,
     PrereqCode VARCHAR(30),
     MinGrade INT

@@ -7,17 +7,17 @@ connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATA
 
 course_code = input("Which course code would you like to delete?: ")
 
-delete_course_query = """
-DELETE FROM {}
+delete_course_query = f"""
+DELETE FROM {cm.COURSE_TABLE}
 WHERE
-    CourseCode = "{}";
-""".format(cm.COURSE_TABLE, course_code)
+    CourseCode = "{course_code}";
+"""
 
-delete_prereq_query = """
-DELETE FROM {}
+delete_prereq_query = f"""
+DELETE FROM {cm.PREREQ_TABLE}
 WHERE
-    CourseCode = "{}";
-""".format(cm.PREREQ_TABLE, course_code)
+    CourseCode = "{course_code}";
+"""
 
 cm.execute_query(connection, delete_course_query)
 cm.execute_query(connection, delete_prereq_query)
