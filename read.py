@@ -1,7 +1,6 @@
 import courses_module as cm
 import personal as p
 import pandas as pd
-from IPython.display import display
 
 # This program will allow you to view a specifc table with every single column and row
 
@@ -13,9 +12,9 @@ table = []
 
 def read_table():
     if table_name == 1:
-        display(cm.create_dataframe(connection, cm.course_info_table_query, cm.COURSE_INFO_COLUMNS, table))
+        cm.display_info(connection, cm.course_info_table_query, cm.COURSE_INFO_COLUMNS, table)
     elif table_name == 2:
-        display(cm.create_dataframe(connection, cm.prereq_info_table_query, cm.PREREQ_INFO_COLUMNS, table))
+        cm.display_info(connection, cm.prereq_info_table_query, cm.PREREQ_INFO_COLUMNS, table)
     else:
         return
     return

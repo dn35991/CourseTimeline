@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 import pandas as pd
+from IPython.display import display
 
 # This is the module used in all of the programs for this project. The global constants "DATABSE", "COURSE_TABLE", 
 #   and "PREREQ_TABLE" can be changed, but is not recommended. Before begining to run any programs, make sure
@@ -12,31 +13,42 @@ PREREQ_TABLE = "prerequisite_courses"
 COURSE_INFO_COLUMNS = ["CourseCode", "CourseName", "Credits", "CourseType", "Completion", "Term", "Grade"]
 PREREQ_INFO_COLUMNS = ["CourseCode", "PrereqCode", "MinGrade"]
 
+term_order = """
+(CASE WHEN Term = NULL THEN 1
+          ELSE 2
+    END)
+"""
+completion_order = """
+(CASE WHEN C.Completion = "Completed" THEN 1
+          WHEN C.Completion = "Current" THEN 2
+          WHEN C.Completion = "Planned" THEN 3
+          WHEN C.Completion = "Available" THEN 4
+          WHEN C.Completion = "Prereq" THEN 5
+          ELSE 6
+    END)
+"""
+
+course_type_order = """
+(CASE WHEN C.CourseType = "Non-Math" THEN 1
+		  WHEN C.CourseType = "PD" THEN 2
+          WHEN C.CourseType = "Math" THEN 3
+          ELSE 4
+	END)
+"""
+
 course_info_table_query = """
 SELECT *
 FROM 
-    {}
+    {} AS C
 ORDER BY 
-    (CASE WHEN Term = NULL THEN 1
-          ELSE 2
-    END) DESC,
-    (CASE WHEN Completion = "Completed" THEN 1
-          WHEN Completion = "Current" THEN 2
-          WHEN Completion = "Planned" THEN 3
-          WHEN Completion = "Available" THEN 4
-          WHEN Completion = "Prereq" THEN 5
-          ELSE 6
-    END) ASC,
+    {} DESC,
+    {} ASC,
 	Term ASC,
     Credits ASC,
-    (CASE WHEN CourseType = "Non-Math" THEN 1
-		  WHEN CourseType = "PD" THEN 2
-          WHEN CourseType = "Math" THEN 3
-          ELSE 4
-	END) ASC;),
+    {} ASC,
     Credits ASC,
     CourseType ASC;
-""".format(COURSE_TABLE)
+""".format(COURSE_TABLE, term_order, completion_order, course_type_order)
 
 prereq_info_table_query = """
 SELECT 
@@ -50,24 +62,12 @@ INNER JOIN
 ON
 	C.CourseCode = PC.CourseCode
 ORDER BY 
-    (CASE WHEN C.Term = NULL THEN 1
-          ELSE 2
-    END) DESC,
-    (CASE WHEN C.Completion = "Completed" THEN 1
-          WHEN C.Completion = "Current" THEN 2
-          WHEN C.Completion = "Planned" THEN 3
-          WHEN C.Completion = "Available" THEN 4
-          WHEN C.Completion = "Prereq" THEN 5
-          ELSE 6
-    END) DESC,
+    {} DESC,
+    {} DESC,
 	C.Term ASC,
     C.Credits ASC,
-    (CASE WHEN C.CourseType = "Non-Math" THEN 1
-		  WHEN C.CourseType = "PD" THEN 2
-          WHEN C.CourseType = "Math" THEN 3
-          ELSE 4
-	END) ASC;
-""".format(PREREQ_TABLE, COURSE_TABLE)
+    {} ASC;
+""".format(PREREQ_TABLE, COURSE_TABLE, term_order, completion_order, course_type_order)
 
 def server_connection(host_name, username, password):
     connection = None
@@ -117,9 +117,9 @@ def read_query(connection, query):
     except Error as err:
         print(f"Error: '{err}'")
 
-def create_dataframe(connection, info_query, column_names, table):
+def display_info(connection, info_query, column_names, table):
     results = read_query(connection, info_query)
     for data in results:
         data = list(data)
         table.append(data)
-    return pd.DataFrame(table, columns = column_names)
+    return display(pd.DataFrame(table, columns = column_names))
