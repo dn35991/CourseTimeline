@@ -6,36 +6,67 @@ import personal as p
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-course_code = input("What is the course code of the planned course?: ")
-term = input("What term is this course being planned?: ")
+course_code = input("What is the course code of the course?: ")
+cm.print_list(cm.COMPLETION_TYPES)
+status = int(input("What is the new completion status of the course?: "))
 
-completion_query = """
-UPDATE
-    {}
-SET 
-    Completion = "Planned"
-WHERE
-    CourseCode = "{}";
-""".format(cm.COURSE_TABLE, course_code)
+def completion_query():
+    query = f"""
+    UPDATE
+    {cm.COURSE_TABLE}
+    SET 
+        Completion = "{cm.COMPLETION_TYPES[status - 1]}"
+    WHERE
+        CourseCode = "{course_code}";
+    """
+    cm.execute_query(connection, query)
+    return
 
-term_query = """
-UPDATE
-    {}
-SET 
-    term = "{}"
-WHERE
-    CourseCode = "{}";
-""".format(cm.COURSE_TABLE, term, course_code)
+def term_query(term):
+    query = f"""
+    UPDATE
+    {cm.COURSE_TABLE}
+    SET 
+        Term = {term}
+    WHERE
+        CourseCode = "{course_code}";
+    """
+    cm.execute_query(connection, query)
+    return
 
-grade_query = """
-UPDATE
-    {}
-SET 
-    Grade = NULL
-WHERE
-    CourseCode = "{}";
-""".format(cm.COURSE_TABLE, course_code)
+def grade_query(grade):
+    query = f"""
+    UPDATE
+    {cm.COURSE_TABLE}
+    SET 
+        Grade = {grade}
+    WHERE
+        CourseCode = "{course_code}";
+    """
+    cm.execute_query(connection, query)
+    return
 
-cm.execute_query(connection, completion_query)
-cm.execute_query(connection, term_query)
-cm.execute_query(connection, grade_query)
+def change_completion():
+    if status == 1:
+        term = input("What term was this course completed?: ")
+        grade = input("What is the achieved grade of this course?: ")
+        completion_query()
+        term_query(f"\"{term}\"")
+        grade_query(grade)
+    elif status == 2 or status == 3:
+        term = input("What term is this course in?: ")
+        completion_query()
+        term_query(f"\"{term}\"")
+        grade_query("NULL")
+    elif status == 4:
+        completion_query()
+        term_query("NULL")
+        grade_query("NULL")
+    elif status == 5:
+        completion_query()
+        term_query("NULL")
+        grade_query("NULL")
+    else:
+        return        
+
+change_completion()

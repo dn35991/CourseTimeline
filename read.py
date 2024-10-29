@@ -6,15 +6,38 @@ import pandas as pd
 
 connection = cm.database_connection(p.HOST_NAME,p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-table_name = int(input("Which table would you like to view (1. {} | 2. {})?: ".format(cm.COURSE_TABLE, cm.PREREQ_TABLE)))
+course_info_table_query = f"""
+SELECT *
+FROM 
+    {cm.COURSE_TABLE} AS C
+ORDER BY 
+    {cm.ORDERING};
+"""
+
+prereq_info_table_query = f"""
+SELECT 
+	PC.CourseCode AS CourseCode,
+    PC.PrereqCode AS PrereqCode,
+    PC.MinGrade AS MinGrade
+FROM 
+	{cm.PREREQ_TABLE} as PC
+INNER JOIN
+	{cm.COURSE_TABLE} as C
+ON
+	C.CourseCode = PC.CourseCode
+ORDER BY
+    {cm.ORDERING};
+"""
+
+table_name = int(input(f"Which table would you like to view (1. {cm.COURSE_TABLE} | 2. {cm.PREREQ_TABLE})?: "))
 
 table = []
 
 def read_table():
     if table_name == 1:
-        cm.display_info(connection, cm.course_info_table_query, cm.COURSE_INFO_COLUMNS, table)
+        cm.display_info(connection, course_info_table_query, cm.COURSE_COLUMNS, table)
     elif table_name == 2:
-        cm.display_info(connection, cm.prereq_info_table_query, cm.PREREQ_INFO_COLUMNS, table)
+        cm.display_info(connection, prereq_info_table_query, cm.PREREQ_COLUMNS, table)
     else:
         return
     return

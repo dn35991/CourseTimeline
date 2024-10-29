@@ -5,53 +5,90 @@ import personal as p
 #   your input matches exactly to the entries or columns in the database
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
-table = int(input("Which table is being updated (1. {} | 2. {})?: ".format(cm.COURSE_TABLE, cm.PREREQ_TABLE)))
-course_code = input("What is the course code of the entry?: ")
-prereq_code = input("What is the prerequisite code for the entry?: ")
-set1 = input("What column is being updated?: ")
-set2 = input("What is the column being updated to?: ")
 
-update_course_query1 = """
-UPDATE 
-    {}
-SET {} = "{}"
-WHERE CourseCode = "{}";
-""".format(cm.COURSE_TABLE, set1, set2, course_code)
+cm.print_list([f"{cm.COURSE_TABLE}", f"{cm.PREREQ_TABLE}"])
+table = int(input("Which table is being updated?: "))
 
-update_course_query2 = """
-UPDATE 
-    {}
-SET {} = {}
-WHERE CourseCode = "{}";
-""".format(cm.COURSE_TABLE, set1, set2, course_code)
+def update_course():
+    course_code = input("What is the course code of the coure being updated?: ")
+    cm.print_list(cm.COURSE_COLUMNS)
+    column = int(input("What column is being updated?:" ))
+    cm.print_list(cm.dict_value(cm.COURSE_DICT, column - 1))
+    value = input("What is the updated value?: ")
 
-update_prereq_query1 = """
-UPDATE 
-    {}
-SET {} = "{}"
-WHERE CourseCode = "{}" AND PrereqCode = "{}";
-""".format(cm.PREREQ_TABLE, set1, set2, course_code, prereq_code)
+    if value == "":
+        value = "NULL"
+        query = f"""
+        UPDATE 
+            {cm.COURSE_TABLE}
+        SET {cm.COURSE_COLUMNS[column - 1]} = {value}
+        WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
+        """
+    elif column == 3 or column == 7:
+        query = f"""
+        UPDATE 
+            {cm.COURSE_TABLE}
+        SET {cm.COURSE_COLUMNS[column - 1]} = {value}
+        WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
+        """
+    elif 1 <= column <= 7:
+        query = f"""
+        UPDATE
+            {cm.COURSE_TABLE}
+        SET {cm.COURSE_COLUMNS[column - 1]} = "{value}"
+        WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
+        """
+    else:
+        print("No entries were updated")
+        return
+        
+    cm.execute_query(connection, query)
+    return
 
-update_prereq_query2 = """
-UPDATE 
-    {}
-SET {} = {}
-WHERE CourseCode = "{}" AND PrereqCode = "{}";
-""".format(cm.PREREQ_TABLE, set1, set2, course_code, prereq_code)
+def update_prereq():
+    course_code = input("What is the course code of the coure being updated?: ")
+    prereq_code = input("What is the corresponding prerequisite code?: ")
+    cm.print_list(cm.PREREQ_COLUMNS)
+    column = int(input("What column is being updated?:" ))
+    cm.print_list(cm.dict_value(cm.PREREQ_DICT, column - 1))
+    value = input("What is the updated value?: ")
 
-def update_table():
+    if value == "":
+        value = "NULL"
+        query = f"""
+        UPDATE 
+            {cm.PREREQ_TABLE}
+        SET {cm.PREREQ_COLUMNS[column - 1]} = {value}
+        WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}";
+        """
+    elif column == 3:
+        query = f"""
+        UPDATE 
+            {cm.PREREQ_TABLE}
+        SET {cm.PREREQ_COLUMNS[2]} = {value}
+        WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}";
+        """
+    elif 1 <= column <= 3:
+        query = f"""
+        UPDATE
+            {cm.PREREQ_TABLE}
+        SET {cm.PREREQ_COLUMNS[column - 1]} = "{value}"
+        WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}";
+        """
+    else:
+        print("No entries were updated")
+        return
+        
+    cm.execute_query(connection, query)
+    return
+
+def update_table(table):
     if table == 1:
-        if (set1 == "Grade" or set1 == "Credits"):
-            cm.execute_query(connection, update_course_query2)
-        else:
-            cm.execute_query(connection, update_course_query1)
+        update_course()
     elif table == 2:
-        if (set1 == "MinGrade"):
-            cm.execute_query(connection, update_prereq_query2)
-        else:
-            cm.execute_query(connection, update_prereq_query1)
+        update_prereq()
     else:
         return
     return
 
-update_table()
+update_table(table)

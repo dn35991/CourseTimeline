@@ -7,67 +7,51 @@ from IPython.display import display
 #   and "PREREQ_TABLE" can be changed, but is not recommended. Before begining to run any programs, make sure
 #   to edit the file "personal.py" where you must enter the values for "HOST_NAME", "USERNAME", and "PASSWORD"
 
+
 DATABASE = "courses"
 COURSE_TABLE = "course_info"
 PREREQ_TABLE = "prerequisite_courses"
-COURSE_INFO_COLUMNS = ["CourseCode", "CourseName", "Credits", "CourseType", "Completion", "Term", "Grade"]
-PREREQ_INFO_COLUMNS = ["CourseCode", "PrereqCode", "MinGrade"]
 
-term_order = """
-(CASE WHEN Term = NULL THEN 1
-          ELSE 2
-    END)
-"""
-completion_order = """
+COURSE_DICT = {
+    "CourseCode": None,
+    "CourseName": None,
+    "Credits": None,
+    "CourseType": ["Math", "Non-Math", "PD"],
+    "Completion": ["Completed", "Current", "Planned", "Available", "Prereq"],
+    "Term": None,
+    "Grade": None
+}
+
+PREREQ_DICT = {
+    "CourseCode": None,
+    "PrereqCode": None,
+    "MinGrade": None
+}
+
+COURSE_COLUMNS = list(COURSE_DICT.keys())
+PREREQ_COLUMNS = list(PREREQ_DICT.keys())
+COMPLETION_TYPES = COURSE_DICT[list(COURSE_DICT.keys())[4]]
+COURSE_TYPE = COURSE_DICT[list(COURSE_DICT.keys())[3]]
+
+ORDERING = f"""
 (CASE WHEN C.Completion = "Completed" THEN 1
-          WHEN C.Completion = "Current" THEN 2
-          WHEN C.Completion = "Planned" THEN 3
-          WHEN C.Completion = "Available" THEN 4
-          WHEN C.Completion = "Prereq" THEN 5
-          ELSE 6
-    END)
-"""
-
-course_type_order = """
+    WHEN C.Completion = "Current" THEN 2
+    WHEN C.Completion = "Planned" THEN 3
+    WHEN C.Completion = "Available" THEN 4
+    WHEN C.Completion = "Prereq" THEN 5
+    ELSE 6
+    END) ASC,
+(CASE WHEN Term = NULL THEN 1
+    ELSE 2
+    END) DESC,
+Term ASC,
+Credits ASC,
 (CASE WHEN C.CourseType = "Non-Math" THEN 1
-		  WHEN C.CourseType = "PD" THEN 2
-          WHEN C.CourseType = "Math" THEN 3
-          ELSE 4
-	END)
+    WHEN C.CourseType = "PD" THEN 2
+    WHEN C.CourseType = "Math" THEN 3
+    ELSE 4
+	END) ASC
 """
-
-course_info_table_query = """
-SELECT *
-FROM 
-    {} AS C
-ORDER BY 
-    {} DESC,
-    {} ASC,
-	Term ASC,
-    Credits ASC,
-    {} ASC,
-    Credits ASC,
-    CourseType ASC;
-""".format(COURSE_TABLE, term_order, completion_order, course_type_order)
-
-prereq_info_table_query = """
-SELECT 
-	PC.CourseCode AS CourseCode,
-    PC.PrereqCode AS PrereqCode,
-    PC.MinGrade AS MinGrade
-FROM 
-	{} as PC
-INNER JOIN
-	{} as C
-ON
-	C.CourseCode = PC.CourseCode
-ORDER BY 
-    {} DESC,
-    {} DESC,
-	C.Term ASC,
-    C.Credits ASC,
-    {} ASC;
-""".format(PREREQ_TABLE, COURSE_TABLE, term_order, completion_order, course_type_order)
 
 def server_connection(host_name, username, password):
     connection = None
@@ -123,3 +107,16 @@ def display_info(connection, info_query, column_names, table):
         data = list(data)
         table.append(data)
     return display(pd.DataFrame(table, columns = column_names))
+
+def dict_value(dict, index):
+    return dict[list(dict.keys())[index]]
+
+def print_list(item):
+    i = 1
+    if type(item) is not list:
+        return
+    else:
+        for value in item:
+            print(f"{i}. {value}")
+            i = i + 1
+        return
