@@ -1,6 +1,5 @@
 import courses_module as cm
 import personal as p
-from IPython.display import display
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 view_options = ["Course Type", "Completion Type", "Term", "Grade", "Course Code", "Prerequisite Courses"]
