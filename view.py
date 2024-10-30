@@ -3,7 +3,14 @@ import personal as p
 import queries as q
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
-view_options = ["Course Type", "Completion Type", "Term", "Grade", "Course Code", "Prerequisite Courses"]
+view_options = [
+    "Course Type", 
+    "Completion Type", 
+    "Term", "Grade", 
+    "Course Code", 
+    "Prerequisite Course Code", 
+    "Prerequisite Required Courses"]
+
 cm.print_list(view_options)
 view = int(input("What would you like to view?: "))
 option = 0
@@ -78,6 +85,17 @@ def course_query(column):
     
     return query
 
+def prereq_query():
+    course_code = input("What prerequisite course would you like to view?: ")
+    query = f"""
+    SELECT *
+    FROM
+        {cm.PREREQ_TABLE} AS P
+    WHERE 
+        {cm.PREREQ_COLUMNS[1]} LIKE "%{course_code}%";
+    """
+    return query
+
 table = []
 
 def views():
@@ -88,6 +106,9 @@ def views():
         query = course_query(view)
         cm.display_info(connection, query, cm.COURSE_COLUMNS, table)
     elif view == 6:
+        query = prereq_query()
+        cm.display_info(connection, query, cm.PREREQ_COLUMNS, table)
+    elif view == 7:
         cm.display_info(connection, q.PREREQS, q.COLUMNS_1, table)
     else:
         return

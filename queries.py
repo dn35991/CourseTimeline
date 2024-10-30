@@ -35,8 +35,8 @@ ON
 	P.CourseCode = C.CourseCode
 INNER JOIN
 	(SELECT DISTINCT
-        C.CourseName,
         PC.PrereqCode,
+        C.CourseName,
         C.Completion
     FROM
 		prerequisite_courses AS PC
