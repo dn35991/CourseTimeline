@@ -3,22 +3,35 @@ import personal as p
 from IPython.display import display
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
-view_options = ["Course Type", "Completion Type", "Term", "Course Code", "Grade", "Prerequisite Courses"]
+view_options = ["Course Type", "Completion Type", "Term", "Grade", "Course Code", "Prerequisite Courses"]
 cm.print_list(view_options)
 view = int(input("What would you like to view?: "))
 option = 0
 
-def course_query1(column):
+def column_except1_list(column):
+    result = []
+    i = 0
+    while i < len(cm.COURSE_COLUMNS):
+        if i == column:
+            i = i + 1
+            continue    
+        else:
+            result.append(cm.COURSE_COLUMNS[i])
+            i = i + 1
+    return result
+
+def course_query(column):
     if column == 1 or column == 2:
         column_name = cm.COURSE_COLUMNS[column + 2]
         cm.print_list(cm.dict_value(cm.COURSE_DICT, column + 2))
         item = int(input(f"What {view_options[column - 1].lower()} would you like to view?: "))
         query = f"""
-        SELECT *
+        SELECT
+            {cm.list_to_string(column_except1_list(column + 2), ", ")}
         FROM
             {cm.COURSE_TABLE} AS C
         WHERE 
-            {column_name} = "{(cm.dict_value(cm.COURSE_DICT, column + 2))[item - 1]}"
+            {column_name} = "{cm.COURSE_DICT[column_name][item - 1]}"
         ORDER BY
             {cm.ORDERING}
         """
@@ -26,7 +39,8 @@ def course_query1(column):
         column_name = cm.COURSE_COLUMNS[column + 2]
         item = input(f"Which {view_options[column - 1].lower()} would you like to view?: ")
         query = f"""
-        SELECT *
+        SELECT
+            {cm.list_to_string(column_except1_list(column + 2), ", ")}
         FROM
             {cm.COURSE_TABLE} AS C
         WHERE 
@@ -35,17 +49,46 @@ def course_query1(column):
             {cm.ORDERING}
         """
     elif column == 4:
+        column_name = cm.COURSE_COLUMNS[6]
+        low_bound = int(input("What is the lowest bounded grade?: "))
+        high_bound = int(input("What is the highest bounded grade?: "))
+        query = f"""
+        SELECT *
+        FROM
+            {cm.COURSE_TABLE} AS C
+        WHERE 
+            {column_name} >= {low_bound} AND {column_name} <= {high_bound}
+        ORDER BY
+            {cm.ORDERING}
+        """
+    elif column == 5:
+        column_name = cm.COURSE_COLUMNS[0]
+        course_code = input("What course code (not exact code) are you viewing?: ")
+        query = f"""
+        SELECT *
+        FROM
+            {cm.COURSE_TABLE} AS C
+        WHERE 
+            {column_name} LIKE "{course_code}%"
+        ORDER BY
+            {cm.ORDERING}
+        """
+    else:    
         return
-
+    
     return query
 
 table = []
 
 def views():
-    if 1 <= view <= 5:
-        query = course_query1(view)
+    if 1 <= view <= 3:
+        query = course_query(view)
+        cm.display_info(connection, query, column_except1_list(view + 2), table)
+    elif 4 <= view <= 5:
+        query = course_query(view)
+        cm.display_info(connection, query, cm.COURSE_COLUMNS, table)
     else:
         return
-    cm.display_info(connection, query, cm.COURSE_COLUMNS, table)
+    return
 
 views()

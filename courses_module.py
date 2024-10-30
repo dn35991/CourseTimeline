@@ -120,3 +120,7 @@ def print_list(item):
             print(f"{i}. {value}")
             i = i + 1
         return
+
+def list_to_string(list, seperator):
+    result = f"{seperator}".join(list)
+    return result
