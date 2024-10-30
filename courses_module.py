@@ -3,7 +3,7 @@ from mysql.connector import Error
 import pandas as pd
 from IPython.display import display
 
-# This is the module used in all of the programs for this project. The global constants "DATABSE", "COURSE_TABLE", 
+# This is the module used in all of the programs for this project. The global constants "DATABASE", "COURSE_TABLE", 
 #   and "PREREQ_TABLE" can be changed, but is not recommended. Before begining to run any programs, make sure
 #   to edit the file "personal.py" where you must enter the values for "HOST_NAME", "USERNAME", and "PASSWORD"
 
@@ -32,26 +32,6 @@ COURSE_COLUMNS = list(COURSE_DICT.keys())
 PREREQ_COLUMNS = list(PREREQ_DICT.keys())
 COMPLETION_TYPES = COURSE_DICT[list(COURSE_DICT.keys())[4]]
 COURSE_TYPE = COURSE_DICT[list(COURSE_DICT.keys())[3]]
-
-ORDERING = f"""
-(CASE WHEN C.Completion = "Completed" THEN 1
-    WHEN C.Completion = "Current" THEN 2
-    WHEN C.Completion = "Planned" THEN 3
-    WHEN C.Completion = "Available" THEN 4
-    WHEN C.Completion = "Prereq" THEN 5
-    ELSE 6
-    END) ASC,
-(CASE WHEN Term = NULL THEN 1
-    ELSE 2
-    END) DESC,
-Term ASC,
-Credits ASC,
-(CASE WHEN C.CourseType = "Non-Math" THEN 1
-    WHEN C.CourseType = "PD" THEN 2
-    WHEN C.CourseType = "Math" THEN 3
-    ELSE 4
-	END) ASC
-"""
 
 def server_connection(host_name, username, password):
     connection = None

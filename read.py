@@ -1,5 +1,6 @@
 import courses_module as cm
 import personal as p
+import queries as q
 import pandas as pd
 
 # This program will allow you to view a specifc table with every single column and row
@@ -11,7 +12,7 @@ SELECT *
 FROM 
     {cm.COURSE_TABLE} AS C
 ORDER BY 
-    {cm.ORDERING};
+    {q.ORDERING};
 """
 
 prereq_info_table_query = f"""
@@ -26,7 +27,7 @@ INNER JOIN
 ON
 	C.CourseCode = PC.CourseCode
 ORDER BY
-    {cm.ORDERING};
+    {q.ORDERING};
 """
 
 table_name = int(input(f"Which table would you like to view (1. {cm.COURSE_TABLE} | 2. {cm.PREREQ_TABLE})?: "))

@@ -31,7 +31,37 @@ def update_course():
         SET {cm.COURSE_COLUMNS[column - 1]} = {value}
         WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
         """
-    elif 1 <= column <= 7:
+
+    elif column == 1:
+        prereq_query1 = f"""
+        UPDATE
+            {cm.PREREQ_TABLE}
+        SET {cm.PREREQ_COLUMNS[0]} = "{value}"
+        WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}"
+        """
+        prereq_query2 = f"""
+        UPDATE
+            {cm.PREREQ_TABLE}
+        SET {cm.PREREQ_COLUMNS[1]} = "{value}"
+        WHERE {cm.PREREQ_COLUMNS[1]} = "{course_code}"
+        """
+        cm.execute_query(connection, prereq_query1)
+        cm.execute_query(connection, prereq_query2)
+        query = f"""
+        UPDATE
+            {cm.COURSE_TABLE}
+        SET {cm.COURSE_COLUMNS[0]} = "{value}"
+        WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
+        """
+    elif column == 4 or column == 5:
+        value = int(value)
+        query = f"""
+        UPDATE
+            {cm.COURSE_TABLE}
+        SET {cm.COURSE_COLUMNS[column - 1]} = "{cm.dict_value(cm.COURSE_DICT, column - 1)[value - 1]}"
+        WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
+        """
+    elif column == 2 or column == 6:
         query = f"""
         UPDATE
             {cm.COURSE_TABLE}

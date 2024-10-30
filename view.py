@@ -1,5 +1,6 @@
 import courses_module as cm
 import personal as p
+import queries as q
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 view_options = ["Course Type", "Completion Type", "Term", "Grade", "Course Code", "Prerequisite Courses"]
@@ -32,7 +33,7 @@ def course_query(column):
         WHERE 
             {column_name} = "{cm.COURSE_DICT[column_name][item - 1]}"
         ORDER BY
-            {cm.ORDERING}
+            {q.ORDERING}
         """
     elif column == 3:
         column_name = cm.COURSE_COLUMNS[column + 2]
@@ -45,7 +46,7 @@ def course_query(column):
         WHERE 
             {column_name} = "{item}"
         ORDER BY
-            {cm.ORDERING}
+            {q.ORDERING}
         """
     elif column == 4:
         column_name = cm.COURSE_COLUMNS[6]
@@ -58,7 +59,7 @@ def course_query(column):
         WHERE 
             {column_name} >= {low_bound} AND {column_name} <= {high_bound}
         ORDER BY
-            {cm.ORDERING}
+            {q.ORDERING}
         """
     elif column == 5:
         column_name = cm.COURSE_COLUMNS[0]
@@ -68,9 +69,9 @@ def course_query(column):
         FROM
             {cm.COURSE_TABLE} AS C
         WHERE 
-            {column_name} LIKE "{course_code}%"
+            {column_name} LIKE "%{course_code}%"
         ORDER BY
-            {cm.ORDERING}
+            {q.ORDERING}
         """
     else:    
         return
@@ -86,6 +87,8 @@ def views():
     elif 4 <= view <= 5:
         query = course_query(view)
         cm.display_info(connection, query, cm.COURSE_COLUMNS, table)
+    elif view == 6:
+        cm.display_info(connection, q.PREREQS, q.COLUMNS_1, table)
     else:
         return
     return

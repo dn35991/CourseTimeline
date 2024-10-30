@@ -9,7 +9,7 @@ connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATA
 
 course_code = input("What is the course code? ")
 pcode = ""
-minimum = 0
+minimum = ""
 
 def add_prereqs():
     n = 0
@@ -28,6 +28,7 @@ def add_prereqs():
                 ("{course_code}", "{pcode}", NULL);
             """
             cm.execute_query(connection, query)
+            pcode = ""
             n = n + 1 
         else:
             query = f"""
@@ -37,6 +38,8 @@ def add_prereqs():
                 ("{course_code}", "{pcode}", {minimum});
             """
             cm.execute_query(connection, query)
+            pcode = ""
+            minimum = ""
             n = n + 1 
 
     print(f"{n} Prerequistes Added for {course_code}")

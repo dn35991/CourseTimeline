@@ -1,8 +1,7 @@
 import courses_module as cm
 import personal as p
 
-# This program will allow you to change a course to "planned" status and add the term that 
-#   the course is planned to be taken in
+# This program will allow you to change the completion status of a course
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 

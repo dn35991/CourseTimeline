@@ -1,8 +1,8 @@
 import courses_module as cm
 import personal as p
 
-# This program will allow you to add a single course and all of its information into the course information table.
-#   Be sure to write each input as specificied in the question prompts.
+# This program will allow you to add a single course and all of its information including the prerequisites
+#   into both tables
  
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 
@@ -41,4 +41,38 @@ def add_course():
         print("No course was added")
         return
 
+def add_prereqs():
+    n = 0
+    while True:
+        pcode = input("What is the prerequisite course code?: ")
+        minimum = input("What is the minimum grade required?: ")
+
+        if pcode == "":
+            print(f"{n} Prerequistes Added for {course_code}")
+            return
+        elif minimum == "":
+            query = f"""
+            INSERT INTO
+                {cm.PREREQ_TABLE}
+            VALUES
+                ("{course_code}", "{pcode}", NULL);
+            """
+            cm.execute_query(connection, query)
+            pcode = ""
+            n = n + 1 
+        else:
+            query = f"""
+            INSERT INTO
+                {cm.PREREQ_TABLE}
+            VALUES
+                ("{course_code}", "{pcode}", {minimum});
+            """
+            cm.execute_query(connection, query)
+            pcode = ""
+            minimum = ""
+            n = n + 1 
+
+    print(f"{n} Prerequistes Added for {course_code}")
+    
 add_course()
+add_prereqs()
