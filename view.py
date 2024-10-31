@@ -6,7 +6,8 @@ connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATA
 view_options = [
     "Course Type", 
     "Completion Type", 
-    "Term", "Grade", 
+    "Term", 
+    "Grade", 
     "Course Code", 
     "Prerequisite Course Code", 
     "Prerequisite Required Courses"]
