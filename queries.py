@@ -1,3 +1,5 @@
+# List of constant queries that are used in the programs
+
 ORDERING = """
 (CASE WHEN C.Completion = "Completed" THEN 1
     WHEN C.Completion = "Current" THEN 2

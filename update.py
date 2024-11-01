@@ -12,7 +12,7 @@ table = int(input("Which table is being updated?: "))
 def update_course():
     course_code = input("What is the course code of the coure being updated?: ")
     cm.print_list(cm.COURSE_COLUMNS)
-    column = int(input("What column is being updated?:" ))
+    column = int(input("What column is being updated?: " ))
     cm.print_list(cm.dict_value(cm.COURSE_DICT, column - 1))
     value = input("What is the updated value?: ")
 
@@ -79,7 +79,7 @@ def update_prereq():
     course_code = input("What is the course code of the coure being updated?: ")
     prereq_code = input("What is the corresponding prerequisite code?: ")
     cm.print_list(cm.PREREQ_COLUMNS)
-    column = int(input("What column is being updated?:" ))
+    column = int(input("What column is being updated?: "))
     cm.print_list(cm.dict_value(cm.PREREQ_DICT, column - 1))
     value = input("What is the updated value?: ")
 

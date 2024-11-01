@@ -29,8 +29,8 @@ ON
 ORDER BY
     {q.ORDERING};
 """
-
-table_name = int(input(f"Which table would you like to view (1. {cm.COURSE_TABLE} | 2. {cm.PREREQ_TABLE})?: "))
+cm.print_list([f"{cm.COURSE_TABLE}", f"{cm.PREREQ_TABLE}"])
+table_name = int(input(f"Which table would you like to view?: "))
 
 table = []
 
