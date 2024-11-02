@@ -5,12 +5,12 @@ import personal as p
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-cm.print_list([f"{cm.COURSE_TABLE}", f"{cm.PREREQ_TABLE}"])
+cm.print_list(["course_info", "prerequisite_courses"])
 table = int(input("Which table would you like to access?: "))
 course_code = input("What is the course code of the entry?: ")
 
 delete_course_query = f"""
-DELETE FROM {cm.COURSE_TABLE}
+DELETE FROM course_info
 WHERE
     CourseCode = "{course_code}";
 """
@@ -18,7 +18,7 @@ WHERE
 def delete_entry():
     if table == 1:
         query = f"""
-        DELETE FROM {cm.COURSE_TABLE}
+        DELETE FROM course_info
         WHERE
             CourseCode = "{course_code}";
         """
@@ -26,7 +26,7 @@ def delete_entry():
     elif table == 2:
         prereq_code = input("What is the corresponding prerequisite code for this entry?: ")
         query = f"""
-        DELETE FROM {cm.PREREQ_TABLE}
+        DELETE FROM prerequisite_courses
         WHERE
             CourseCode = "{course_code}" AND PrereqCode = "{prereq_code}";
         """

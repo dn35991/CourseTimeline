@@ -12,7 +12,7 @@ status = int(input("What is the new completion status of the course?: "))
 def completion_query():
     query = f"""
     UPDATE
-    {cm.COURSE_TABLE}
+    course_info
     SET 
         Completion = "{cm.COMPLETION_TYPES[status - 1]}"
     WHERE
@@ -24,7 +24,7 @@ def completion_query():
 def term_query(term):
     query = f"""
     UPDATE
-    {cm.COURSE_TABLE}
+    course_info
     SET 
         Term = {term}
     WHERE
@@ -36,7 +36,7 @@ def term_query(term):
 def grade_query(grade):
     query = f"""
     UPDATE
-    {cm.COURSE_TABLE}
+    course_info
     SET 
         Grade = {grade}
     WHERE

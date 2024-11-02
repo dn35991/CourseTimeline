@@ -3,10 +3,9 @@ from mysql.connector import Error
 import pandas as pd
 from IPython.display import display
 
-# This is the module used in all of the programs for this project. The global constants "DATABASE", "COURSE_TABLE", 
-#   and "PREREQ_TABLE" can be changed, but is not recommended. Before begining to run any programs, make sure
-#   to edit the file "personal.py" where you must enter the values for "HOST_NAME", "USERNAME", and "PASSWORD"
-
+# This is the module used in all of the programs for this project. The global constants should not be changed
+#   since the database is initialized with specific column and table names. Before begining to run any programs, 
+#   make sure to edit the file "personal.py" where you must enter the values for "HOST_NAME", "USERNAME", and "PASSWORD"
 
 DATABASE = "courses"
 COURSE_TABLE = "course_info"

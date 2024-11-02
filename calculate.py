@@ -16,9 +16,9 @@ cm.print_list(calculation_options)
 type = int(input("WHat would you like to calculate?: "))
 
 def calculate_avg():
-    query =f"""
+    query = """
     SELECT 
-        AVG(Grade)
+        ROUND(AVG(Grade), 2)
     FROM
         course_info
     WHERE 
@@ -28,9 +28,9 @@ def calculate_avg():
     return query
 
 def math_avg():
-    query =f"""
+    query = """
     SELECT 
-        AVG(Grade)
+        ROUND(AVG(Grade), 2)
     FROM
         course_info
     WHERE 
@@ -53,7 +53,7 @@ def num_course_type():
             Completion = "{cm.COMPLETION_TYPES[completion - 1]}";
         """
     elif completion == 6:
-        query = f"""
+        query = """
         SELECT
             COUNT(CourseCode)
         FROM 
@@ -91,7 +91,7 @@ def num_credit():
             CourseType != "PD";
         """
     elif column == 3:
-        query = f"""
+        query = """
         SELECT
             SUM(Credits)
         FROM 

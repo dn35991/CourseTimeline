@@ -17,7 +17,7 @@ completion = int(input("What is the completion status of the course?: "))
 def add_query(course_code, course_name, credits, course_type, completion, term, grade):
     query = f"""
     INSERT INTO
-        {cm.COURSE_TABLE}
+        course_info
     VALUES
         ("{course_code}", "{course_name}", {credits}, "{cm.COURSE_TYPE[course_type - 1]}", "{cm.COMPLETION_TYPES[completion - 1]}", {term}, {grade})
     """
@@ -53,7 +53,7 @@ def add_prereqs():
         elif minimum == "":
             query = f"""
             INSERT INTO
-                {cm.PREREQ_TABLE}
+                prerequisite_courses
             VALUES
                 ("{course_code}", "{pcode}", NULL);
             """
@@ -63,7 +63,7 @@ def add_prereqs():
         else:
             query = f"""
             INSERT INTO
-                {cm.PREREQ_TABLE}
+                prerequisite_courses
             VALUES
                 ("{course_code}", "{pcode}", {minimum});
             """

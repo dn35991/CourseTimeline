@@ -10,7 +10,7 @@ connection = cm.database_connection(p.HOST_NAME,p.USERNAME, p.PASSWORD, cm.DATAB
 course_info_table_query = f"""
 SELECT *
 FROM 
-    {cm.COURSE_TABLE} AS C
+    course_info AS C
 ORDER BY 
     {q.ORDERING};
 """
@@ -21,15 +21,15 @@ SELECT
     PC.PrereqCode AS PrereqCode,
     PC.MinGrade AS MinGrade
 FROM 
-	{cm.PREREQ_TABLE} as PC
+	prerequisite_courses as PC
 INNER JOIN
-	{cm.COURSE_TABLE} as C
+	course_info as C
 ON
 	C.CourseCode = PC.CourseCode
 ORDER BY
     {q.ORDERING};
 """
-cm.print_list([f"{cm.COURSE_TABLE}", f"{cm.PREREQ_TABLE}"])
+cm.print_list(["course_info", "prerequisite_courses"])
 table_name = int(input(f"Which table would you like to view?: "))
 
 table = []

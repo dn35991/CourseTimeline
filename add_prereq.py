@@ -23,7 +23,7 @@ def add_prereqs():
         elif minimum == "":
             query = f"""
             INSERT INTO
-                {cm.PREREQ_TABLE}
+                prerequisite_courses
             VALUES
                 ("{course_code}", "{pcode}", NULL);
             """
@@ -33,7 +33,7 @@ def add_prereqs():
         else:
             query = f"""
             INSERT INTO
-                {cm.PREREQ_TABLE}
+                prerequisite_courses
             VALUES
                 ("{course_code}", "{pcode}", {minimum});
             """

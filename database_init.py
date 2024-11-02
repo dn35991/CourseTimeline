@@ -11,7 +11,7 @@ CREATE DATABASE {cm.DATABASE};
 """
 
 course_table_query = f"""
-CREATE TABLE {cm.COURSE_TABLE} (
+CREATE TABLE course_info (
     CourseCode VARCHAR(30) NOT NULL,
     CourseName VARCHAR(10000),
     Credits DECIMAL(10,2),

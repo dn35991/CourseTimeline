@@ -37,7 +37,7 @@ def course_query(column):
         SELECT
             {cm.list_to_string(column_except1_list(column + 2), ", ")}
         FROM
-            {cm.COURSE_TABLE} AS C
+            course_info AS C
         WHERE 
             {column_name} = "{cm.COURSE_DICT[column_name][item - 1]}"
         ORDER BY
@@ -50,7 +50,7 @@ def course_query(column):
         SELECT
             {cm.list_to_string(column_except1_list(column + 2), ", ")}
         FROM
-            {cm.COURSE_TABLE} AS C
+            course_info AS C
         WHERE 
             {column_name} = "{item}"
         ORDER BY
@@ -63,7 +63,7 @@ def course_query(column):
         query = f"""
         SELECT *
         FROM
-            {cm.COURSE_TABLE} AS C
+            course_info AS C
         WHERE 
             {column_name} >= {low_bound} AND {column_name} <= {high_bound}
         ORDER BY
@@ -75,7 +75,7 @@ def course_query(column):
         query = f"""
         SELECT *
         FROM
-            {cm.COURSE_TABLE} AS C
+            course_info AS C
         WHERE 
             {column_name} LIKE "%{course_code}%"
         ORDER BY
@@ -91,7 +91,7 @@ def prereq_query():
     query = f"""
     SELECT *
     FROM
-        {cm.PREREQ_TABLE} AS P
+        prerequisite_courses AS P
     WHERE 
         {cm.PREREQ_COLUMNS[1]} LIKE "%{course_code}%";
     """

@@ -6,7 +6,7 @@ import personal as p
 
 connection = cm.database_connection(p.HOST_NAME, p.USERNAME, p.PASSWORD, cm.DATABASE)
 
-cm.print_list([f"{cm.COURSE_TABLE}", f"{cm.PREREQ_TABLE}"])
+cm.print_list(["course_info", "prerequisite_courses"])
 table = int(input("Which table is being updated?: "))
 
 def update_course():
@@ -20,14 +20,14 @@ def update_course():
         value = "NULL"
         query = f"""
         UPDATE 
-            {cm.COURSE_TABLE}
+            course_info
         SET {cm.COURSE_COLUMNS[column - 1]} = {value}
         WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
         """
     elif column == 3 or column == 7:
         query = f"""
         UPDATE 
-            {cm.COURSE_TABLE}
+            course_info
         SET {cm.COURSE_COLUMNS[column - 1]} = {value}
         WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
         """
@@ -35,13 +35,13 @@ def update_course():
     elif column == 1:
         prereq_query1 = f"""
         UPDATE
-            {cm.PREREQ_TABLE}
+            prerequisite_courses
         SET {cm.PREREQ_COLUMNS[0]} = "{value}"
         WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}"
         """
         prereq_query2 = f"""
         UPDATE
-            {cm.PREREQ_TABLE}
+            prerequisite_courses
         SET {cm.PREREQ_COLUMNS[1]} = "{value}"
         WHERE {cm.PREREQ_COLUMNS[1]} = "{course_code}"
         """
@@ -49,7 +49,7 @@ def update_course():
         cm.execute_query(connection, prereq_query2)
         query = f"""
         UPDATE
-            {cm.COURSE_TABLE}
+            course_info
         SET {cm.COURSE_COLUMNS[0]} = "{value}"
         WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
         """
@@ -57,14 +57,14 @@ def update_course():
         value = int(value)
         query = f"""
         UPDATE
-            {cm.COURSE_TABLE}
+            course_info
         SET {cm.COURSE_COLUMNS[column - 1]} = "{cm.dict_value(cm.COURSE_DICT, column - 1)[value - 1]}"
         WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
         """
     elif column == 2 or column == 6:
         query = f"""
         UPDATE
-            {cm.COURSE_TABLE}
+            course_info
         SET {cm.COURSE_COLUMNS[column - 1]} = "{value}"
         WHERE {cm.COURSE_COLUMNS[0]} = "{course_code}";
         """
@@ -87,21 +87,21 @@ def update_prereq():
         value = "NULL"
         query = f"""
         UPDATE 
-            {cm.PREREQ_TABLE}
+            prerequisite_courses
         SET {cm.PREREQ_COLUMNS[column - 1]} = {value}
         WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}";
         """
     elif column == 3:
         query = f"""
         UPDATE 
-            {cm.PREREQ_TABLE}
+            prerequisite_courses
         SET {cm.PREREQ_COLUMNS[2]} = {value}
         WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}";
         """
     elif 1 <= column <= 3:
         query = f"""
         UPDATE
-            {cm.PREREQ_TABLE}
+            prerequisite_courses
         SET {cm.PREREQ_COLUMNS[column - 1]} = "{value}"
         WHERE {cm.PREREQ_COLUMNS[0]} = "{course_code}";
         """
